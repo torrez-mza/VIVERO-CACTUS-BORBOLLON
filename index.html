@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cactus Borbollón - Vivero & Plantas en Mendoza</title>
+    <!-- FontAwesome Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Montserrat (Títulos) e Inter (Textos) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0d1a12;
+            --bg-card: #132219;
+            --bg-surface: #1a2c22;
+            --accent-green: #2ecc71;
+            --accent-green-glow: rgba(46, 204, 113, 0.25);
+            --accent-earth: #d97706;
+            --text-primary: #f0fdf4;
+            --text-secondary: #9ca3af;
+            --border-color: #23382b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        
+        h1, h2, h3, h4, .price-tag, .filter-btn, .hero h1, .section-header h2 {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-primary); 
+            line-height: 1.6; 
+            overflow-x: hidden; 
+        }
+
+        /* BARRA SUPERIOR */
+        .top-bar {
+            background: #08110b;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+        .top-bar .location-tag { color: var(--accent-green); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .btn-admin-login {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-admin-login:hover { color: #fff; border-color: var(--accent-green); background: rgba(46, 204, 113, 0.1); }
+
+        /* PANEL ADMIN */
+        #admin-panel {
+            display: none;
+            background: var(--bg-surface);
+            padding: 20px;
+            border-bottom: 3px solid var(--accent-green);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        body.admin-mode #admin-panel { display: block; }
+        
+        .admin-controls-group {
+            background: #132219;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .admin-controls-group h4 { color: var(--accent-green); margin-bottom: 10px; font-size: 1rem; }
+
+        .btn-panel {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 0.95rem;
+        }
+
+        /* HERO / BANNER BOTÁNICO */
+        .hero {
+            position: relative;
+            background: linear-gradient(135deg, rgba(13, 26, 18, 0.85), rgba(13, 26, 18, 0.96)), center/cover no-repeat;
+            padding: 90px 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--accent-green);
+            box-shadow: inset 0 -20px 40px rgba(0,0,0,0.6);
+        }
+        .hero-tag {
+            display: inline-block;
+            background: rgba(46, 204, 113, 0.15);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+        .hero h1 { font-size: 3rem; text-transform: uppercase; letter-spacing: 2px; color: #fff; margin-bottom: 12px; font-weight: 800; }
+        .hero h1 span { color: var(--accent-green); }
+        .hero p { font-size: 1.2rem; color: #cbd5e1; max-width: 700px; margin: 0 auto 30px auto; font-weight: 400; line-height: 1.7; }
+        
+        .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .btn-primary-act {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.35);
+            transition: all 0.3s ease;
+        }
+        .btn-primary-act:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(46, 204, 113, 0.5); }
+        .btn-maps {
+            background: #dc2626;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.35);
+            transition: all 0.3s ease;
+        }
+        .btn-maps:hover { transform: translateY(-3px); }
+
+        /* BANDA DE VALOR */
+        .value-banner {
+            background: var(--bg-surface);
+            padding: 30px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .value-card i { font-size: 2.2rem; color: var(--accent-green); margin-bottom: 12px; }
+        .value-card h4 { font-size: 1.05rem; color: #fff; margin-bottom: 6px; font-weight: 600; }
+        .value-card p { font-size: 0.9rem; color: var(--text-secondary); }
+
+        /* SECCIÓN CATÁLOGO Y FILTROS */
+        .catalog-container { max-width: 1280px; margin: 60px auto; padding: 0 20px; }
+        .section-header { text-align: center; margin-bottom: 35px; }
+        .section-header h2 { font-size: 2.4rem; color: #fff; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; margin-bottom: 10px; }
+        .section-header p { color: var(--accent-green); font-size: 1.1rem; font-weight: 500; }
+
+        /* FILTROS DE CATEGORÍAS */
+        .filter-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        .filter-btn {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            border-radius: 30px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent-green);
+            color: #0d1a12;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 15px var(--accent-green-glow);
+        }
+
+        /* GRID DE PRODUCTOS */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.35s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-green);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px var(--accent-green-glow);
+        }
+        .card-img-container { 
+            width: 100%; 
+            height: 250px; 
+            background: #000; 
+            position: relative; 
+            cursor: pointer; 
+            overflow: hidden;
+        }
+        .card-img-container img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.5s ease;
+        }
+        .card-img-container:hover img { transform: scale(1.05); }
+        
+        .plant-badge {
+            position: absolute;
+            top: 12px; left: 12px;
+            background: rgba(13, 26, 18, 0.85);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(4px);
+        }
+
+        .gallery-nav {
+            position: absolute;
+            bottom: 14px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 8px; background: rgba(0,0,0,0.75);
+            padding: 6px 14px; border-radius: 20px;
+            backdrop-filter: blur(6px);
+        }
+        .dot { width: 9px; height: 9px; border-radius: 50%; background: #64748b; cursor: pointer; transition: background 0.2s; }
+        .dot.active { background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+
+        .card-body { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .card h3 { font-size: 1.3rem; color: #fff; margin-bottom: 10px; font-weight: 700; }
+        .card p { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 22px; line-height: 1.6; }
+        
+        .price-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+        .price-tag { font-size: 1.7rem; color: var(--accent-green); font-weight: 800; }
+        
+        .btn-wssp-card {
+            background-color: var(--accent-green);
+            color: #0d1a12;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.25);
+        }
+        .btn-wssp-card:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .admin-actions { display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px; }
+        .btn-edit { background: #d97706; color: white; border: none; padding: 8px; border-radius: 6px; flex: 1; cursor: pointer; font-weight: 600; }
+        .btn-delete { background: #dc2626; color: white; border: none; padding: 8px; border-radius: 6px; flex: 1; cursor: pointer; font-weight: 600; }
+
+        /* MODALES / VISOR DE IMAGEN */
+        .modal {
+            display: none;
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 520px;
+            border: 1px solid var(--accent-green);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: var(--text-secondary); font-weight: 600; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 12px; background: #0d1a12; border: 1px solid var(--border-color); color: #fff; border-radius: 8px; font-size: 1rem;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent-green); outline: none; }
+        .form-buttons { display: flex; gap: 12px; margin-top: 20px; }
+        .btn-save { background: var(--accent-green); color: #0d1a12; border: none; padding: 12px; border-radius: 8px; flex: 1; font-weight: 700; cursor: pointer; font-size: 1rem; }
+        .btn-close { background: #334155; color: #fff; border: none; padding: 12px; border-radius: 8px; flex: 1; cursor: pointer; font-size: 1rem; }
+
+        footer {
+            text-align: center;
+            padding: 50px 20px;
+            background: #08110b;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        footer a { color: var(--accent-green); text-decoration: none; margin: 0 12px; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <span class="location-tag"><i class="fa-solid fa-location-dot"></i> El Borbollón, Las Heras, Mendoza</span>
+        <button class="btn-admin-login" onclick="toggleAdminLogin()"><i class="fa-solid fa-lock"></i> Panel Admin</button>
+    </div>
+
+    <!-- PANEL ADMIN -->
+    <div id="admin-panel">
+        <div class="admin-controls-group">
+            <h4><i class="fa-solid fa-image"></i> Cambiar Banner del Vivero</h4>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <input type="text" id="inputBannerUrl" placeholder="Pegá el enlace directo de la foto aquí..." style="flex: 1; padding: 10px; background: #0d1a12; border: 1px solid var(--border-color); color: #fff; border-radius: 6px; min-width: 220px;">
+                <button class="btn-panel" style="background: var(--accent-green); color:#0d1a12;" onclick="guardarBannerDirecto()">Guardar Banner</button>
+            </div>
+        </div>
+        <div>
+            <button class="btn-panel" style="background:#2ecc71; color:#0d1a12;" onclick="openAddModal()"><i class="fa-solid fa-plus"></i> Agregar Nueva Planta</button>
+        </div>
+    </div>
+
+    <!-- HERO / BANNER PRINCIPAL -->
+    <section class="hero" id="heroSection">
+        <span class="hero-tag"><i class="fa-solid fa-seedling"></i> Producción Propia y Asesoramiento</span>
+        <h1>Cactus <span>Borbollón</span></h1>
+        <p>Especialistas en cactus, suculentas, plantas de interior, rosales y frutales. Todo para llenar tu hogar y jardín de vida.</p>
+        <div class="hero-buttons">
+            <a href="https://wa.me/5492617677108?text=Hola!%20Quiero%20consultar%20por%20disponibilidad%20de%20plantas" target="_blank" class="btn-primary-act">
+                <i class="fa-brands fa-whatsapp" style="font-size:1.3rem;"></i> Consultar por WhatsApp
+            </a>
+            <a href="https://www.google.com/maps/search/?api=1&query=Vivero+Cactus+Borbollon+Mendoza" target="_blank" class="btn-maps">
+                <i class="fa-solid fa-map-location-dot"></i> Ver Ubicación en Google Maps
+            </a>
+        </div>
+    </section>
+
+    <!-- BANDA DE VALOR -->
+    <section class="value-banner">
+        <div class="value-card">
+            <i class="fa-solid fa-truck-fast"></i>
+            <h4>Envíos Cercanos</h4>
+            <p>Entregas en Las Heras, Mendoza y zonas aledañas.</p>
+        </div>
+        <div class="value-card">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+            <h4>Atención Familiar</h4>
+            <p>Asesoramiento personalizado para el cuidado de tus plantas.</p>
+        </div>
+        <div class="value-card">
+            <i class="fa-solid fa-store"></i>
+            <h4>Punto de Venta</h4>
+            <p>Ventas por mayor y menor directo en El Borbollón.</p>
+        </div>
+    </section>
+
+    <!-- CATÁLOGO DE PLANTAS CON FILTROS -->
+    <section class="catalog-container">
+        <div class="section-header">
+            <h2>Nuestro Catálogo</h2>
+            <p>Filtrá por categoría para encontrar lo que buscás</p>
+        </div>
+
+        <!-- BOTONES DE FILTRO -->
+        <div class="filter-wrapper">
+            <button class="filter-btn active" onclick="filterCatalog('todos', this)">Todas</button>
+            <button class="filter-btn" onclick="filterCatalog('cactus', this)">Cactus y Suculentas</button>
+            <button class="filter-btn" onclick="filterCatalog('rosales', this)">Rosales</button>
+            <button class="filter-btn" onclick="filterCatalog('flores', this)">Flores</button>
+            <button class="filter-btn" onclick="filterCatalog('arbustos', this)">Arbustos</button>
+            <button class="filter-btn" onclick="filterCatalog('arboles', this)">Árboles y Frutales</button>
+            <button class="filter-btn" onclick="filterCatalog('interior', this)">Interior</button>
+            <button class="filter-btn" onclick="filterCatalog('colgantes', this)">Colgantes</button>
+        </div>
+
+        <div class="grid" id="productGrid"></div>
+    </section>
+
+    <!-- MODAL VISOR DE IMAGEN (LIGHTBOX) -->
+    <div class="modal" id="imageModal" onclick="closeImageModal()">
+        <div style="text-align:center; max-width:95%; max-height:95vh; position:relative;" onclick="event.stopPropagation()">
+            <span onclick="closeImageModal()" style="position:absolute; top:-20px; right:-20px; background:var(--accent-green); color:#0d1a12; width:38px; height:38px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; cursor:pointer; font-size:1.3rem; box-shadow:0 4px 15px rgba(0,0,0,0.6);">×</span>
+            <img id="expandedImg" src="" style="max-width:100%; max-height:85vh; border-radius:10px; box-shadow:0 15px 50px rgba(0,0,0,0.9); border: 2px solid var(--accent-green); object-fit: contain;">
+            <p style="color: var(--text-secondary); margin-top: 15px; font-size: 0.95rem;"><i class="fa-solid fa-magnifying-glass"></i> Tocá fuera de la imagen o la cruz para cerrar</p>
+        </div>
+    </div>
+
+    <!-- MODAL LOGIN ADMIN -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom:18px; color:#fff;">Acceso Administrador</h3>
+            <div class="form-group">
+                <label>Contraseña:</label>
+                <input type="password" id="adminPassword" placeholder="Clave de administración">
+            </div>
+            <div class="form-buttons">
+                <button class="btn-save" onclick="loginAdmin()">Ingresar</button>
+                <button class="btn-close" onclick="closeModal('loginModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PRODUCTO -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <h3 id="modalTitle" style="margin-bottom:18px; color:#fff;">Publicar Planta</h3>
+            <input type="hidden" id="prodIndex">
+            <div class="form-group">
+                <label>Nombre de la Planta:</label>
+                <input type="text" id="prodName" placeholder="Ej: Rosales Sevillanos">
+            </div>
+            <div class="form-group">
+                <label>Categoría:</label>
+                <select id="prodCategory">
+                    <option value="cactus">Cactus y Suculentas</option>
+                    <option value="rosales">Rosales</option>
+                    <option value="flores">Flores</option>
+                    <option value="arbustos">Arbustos</option>
+                    <option value="arboles">Árboles y Frutales</option>
+                    <option value="interior">Interior</option>
+                    <option value="colgantes">Colgantes</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Precio ($):</label>
+                <input type="number" id="prodPrice" placeholder="Ej: 3500">
+            </div>
+            <div class="form-group">
+                <label>Descripción / Cuidados:</label>
+                <textarea id="prodDesc" rows="3" placeholder="Tamaño de maceta, riego, iluminación..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>URLs de Fotos (separadas por coma):</label>
+                <input type="text" id="prodImg" placeholder="https://i.ibb.co/foto1.jpg, https://i.ibb.co/foto2.jpg">
+            </div>
+            <div class="form-buttons">
+                <button class="btn-save" onclick="saveProduct()">Guardar</button>
+                <button class="btn-close" onclick="closeModal('productModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p><strong>Cactus Borbollón - Vivero de Plantas</strong> © 2026</p>
+        <p>El Borbollón, Las Heras, Mendoza, Argentina</p>
+        <div style="margin-top:18px;">
+            <a href="https://wa.me/5492617677108" target="_blank"><i class="fa-brands fa-whatsapp"></i> 261 767-7108</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=Vivero+Cactus+Borbollon+Mendoza" target="_blank"><i class="fa-solid fa-location-dot"></i> Ubicación Google Maps</a>
+        </div>
+    </footer>
+
+    <script>
+        const phone = "5492617677108";
+        let isAdmin = false;
+        let currentFilter = 'todos';
+
+        const defaultBanner = "https://i.postimg.cc/q76pPT7V/1790305937565.png";
+        function getBanner() {
+            return localStorage.getItem('vivero_banner') || defaultBanner;
+        }
+        function aplicarBanner() {
+            document.getElementById('heroSection').style.backgroundImage = `linear-gradient(135deg, rgba(13, 26, 18, 0.85), rgba(13, 26, 18, 0.96)), url('${getBanner()}')`;
+        }
+        aplicarBanner();
+
+        function guardarBannerDirecto() {
+            const link = document.getElementById('inputBannerUrl').value.trim();
+            if(link) {
+                localStorage.setItem('vivero_banner', link);
+                aplicarBanner();
+                alert("¡Banner actualizado con éxito!");
+                document.getElementById('inputBannerUrl').value = '';
+            } else {
+                alert("Por favor pegá un enlace válido.");
+            }
+        }
+
+        // EJEMPLOS DE PLANTAS PARA CARGAR DE INICIO
+        const initialProducts = [
+            { 
+                name: "Colección de Cactus y Suculentas (Maceta N°10)",
+                category: "cactus",
+                price: 2500, 
+                desc: "Variedad de suculentas y cactus arraigados en maceta plástica. Ideales para interiores luminosos o galerías. Bajo mantenimiento.",
+                img: "https://i.postimg.cc/q76pPT7V/1790305937565.png" 
+            },
+            { 
+                name: "Rosales Arbustivos en Floración",
+                category: "rosales",
+                price: 8500, 
+                desc: "Rosales vigorosos listos para plantar en suelo o macetas grandes. Gran variedad de colores.",
+                img: "https://i.postimg.cc/q76pPT7V/1790305937565.png" 
+            },
+            { 
+                name: "Plantas Colgantes (Lazo / Cadenas)",
+                category: "colgantes",
+                price: 6000, 
+                desc: "Hermosas caída natural para galerías, balcones o interiores colgantes. Muy frondosas.",
+                img: "https://i.postimg.cc/q76pPT7V/1790305937565.png" 
+            },
+            { 
+                name: "Árbol Frutal Cítrico (Limonero / Naranjo)",
+                category: "arboles",
+                price: 22000, 
+                desc: "Árboles injertados de excelente genética adaptados al clima de Mendoza. Prontos para dar frutos.",
+                img: "https://i.postimg.cc/q76pPT7V/1790305937565.png" 
+            },
+            { 
+                name: "Monstera Deliciosa (Costilla de Adán)",
+                category: "interior",
+                price: 14000, 
+                desc: "Planta de interior muy elegante de hojas grandes perforadas. Sol filtrado y riego moderado.",
+                img: "https://i.postimg.cc/q76pPT7V/1790305937565.png" 
+            },
+            { 
+                name: "Flores de Estación (Petunias / Alegrías)",
+                category: "flores",
+                price: 3500, 
+                desc: "Bandejas y potes con floración colorida de estación para canteros y macetones.",
+                img: "https://i.postimg.cc/q76pPT7V/1790305937565.png" 
+            }
+        ];
+
+        function getProducts() {
+            const stored = localStorage.getItem('vivero_products');
+            return stored ? JSON.parse(stored) : initialProducts;
+        }
+
+        function filterCatalog(category, btnElement) {
+            currentFilter = category;
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const products = getProducts();
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+
+            const filtered = currentFilter === 'todos' 
+                ? products 
+                : products.filter(p => p.category === currentFilter);
+
+            filtered.forEach((prod, index) => {
+                const images = prod.img ? prod.img.split(',').map(s => s.trim()) : ['https://i.postimg.cc/q76pPT7V/1790305937565.png'];
+                const wsMessage = encodeURIComponent(`Hola! Me interesa consultar por la planta "${prod.name}" publicada en la web del vivero.`);
+                
+                let dotsHtml = '';
+                if (images.length > 1) {
+                    dotsHtml = `<div class="gallery-nav">` + 
+                        images.map((_, i) => `<div class="dot ${i===0?'active':''}" onclick="event.stopPropagation(); switchImg(${index}, ${i})"></div>`).join('') + 
+                        `</div>`;
+                }
+
+                grid.innerHTML += `
+                    <div class="card">
+                        <div class="card-img-container" onclick="openProductImageViewer(${index})">
+                            <span class="plant-badge"><i class="fa-solid fa-leaf"></i> ${prod.category.toUpperCase()}</span>
+                            <img id="img-${index}" src="${images[0]}" alt="${prod.name}" loading="lazy">
+                            ${dotsHtml}
+                        </div>
+                        <div class="card-body">
+                            <div>
+                                <h3>${prod.name}</h3>
+                                <p>${prod.desc}</p>
+                            </div>
+                            <div>
+                                <div class="price-row">
+                                    <div class="price-tag">$${Number(prod.price).toLocaleString('es-AR')}</div>
+                                </div>
+                                <a href="https://wa.me/${phone}?text=${wsMessage}" target="_blank" class="btn-wssp-card">
+                                    <i class="fa-brands fa-whatsapp" style="font-size:1.2rem;"></i> Consultar por WhatsApp
+                                </a>
+                            </div>
+                            ${isAdmin ? `
+                                <div class="admin-actions">
+                                    <button class="btn-edit" onclick="openEditModal(${index})">Editar</button>
+                                    <button class="btn-delete" onclick="deleteProduct(${index})">Eliminar</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function switchImg(pIdx, iIdx) {
+            const prod = getProducts()[pIdx];
+            const imgs = prod.img.split(',').map(s => s.trim());
+            document.getElementById(`img-${pIdx}`).src = imgs[iIdx];
+        }
+
+        function openProductImageViewer(pIdx) {
+            const currentImgSrc = document.getElementById(`img-${pIdx}`).src;
+            document.getElementById('expandedImg').src = currentImgSrc;
+            document.getElementById('imageModal').style.display = 'flex';
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        function toggleAdminLogin() {
+            if(isAdmin) {
+                isAdmin = false;
+                document.body.classList.remove('admin-mode');
+                renderProducts();
+            } else {
+                document.getElementById('loginModal').style.display = 'flex';
+            }
+        }
+
+        function loginAdmin() {
+            if(document.getElementById('adminPassword').value === 'torrez2026') {
+                isAdmin = true;
+                document.body.classList.add('admin-mode');
+                closeModal('loginModal');
+                document.getElementById('adminPassword').value = '';
+                renderProducts();
+            } else { alert("Clave incorrecta."); }
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').innerText = 'Publicar Planta';
+            document.getElementById('prodIndex').value = '';
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodPrice').value = '';
+            document.getElementById('prodDesc').value = '';
+            document.getElementById('prodImg').value = '';
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        function openEditModal(index) {
+            const prod = getProducts()[index];
+            document.getElementById('modalTitle').innerText = 'Editar Planta';
+            document.getElementById('prodIndex').value = index;
+            document.getElementById('prodName').value = prod.name;
+            document.getElementById('prodPrice').value = prod.price;
+            document.getElementById('prodDesc').value = prod.desc;
+            document.getElementById('prodImg').value = prod.img;
+            if(prod.category) document.getElementById('prodCategory').value = prod.category;
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        function saveProduct() {
+            const index = document.getElementById('prodIndex').value;
+            const newProd = {
+                name: document.getElementById('prodName').value,
+                category: document.getElementById('prodCategory').value,
+                price: document.getElementById('prodPrice').value,
+                desc: document.getElementById('prodDesc').value,
+                img: document.getElementById('prodImg').value.trim()
+            };
+            if(!newProd.name || !newProd.price) { alert("Completá el nombre y el precio."); return; }
+
+            const products = getProducts();
+            if(index === '') products.push(newProd);
+            else products[index] = newProd;
+
+            localStorage.setItem('vivero_products', JSON.stringify(products));
+            closeModal('productModal');
+            renderProducts();
+        }
+
+        function deleteProduct(index) {
+            if(confirm("¿Eliminar esta planta del catálogo?")) {
+                const products = getProducts();
+                products.splice(index, 1);
+                localStorage.setItem('vivero_products', JSON.stringify(products));
+                renderProducts();
+            }
+        }
+
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        
+        renderProducts();
+    </script>
+</body>
+</html>
